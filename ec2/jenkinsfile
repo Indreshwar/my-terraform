@@ -20,28 +20,28 @@ pipeline{
        }
     stage('trivy scan'){
         steps{
-            dir('ec2') {
+            dir('my-terraform/ec2') {
                sh 'trivy fs --format table -o ec2-report.txt . ' 
             }
         }
     }
     stage('terraform init'){
         steps{
-           dir('ec2'){
+           dir('my-terraform/ec2'){
              sh 'terraform init'
            }
        }
     }
     stage('terraform plan'){
         steps{
-            dir('ec2'){
+            dir('my-terraform/ec2'){
                 sh 'terraform plan'
             }
         }
     }
     stage('terraform apply'){
         steps{
-            dir('ec2'){
+            dir('my-terraform/ec2'){
                 sh 'terraform apply -auto-approve'
             }
         }
