@@ -28,7 +28,7 @@ pipeline{
     stage('terraform init'){
         steps{
             sh '''
-              cd my-terraform
+              cd my-terraform/ec2
               terraform init
             '''
         }
@@ -36,7 +36,7 @@ pipeline{
     stage('terraform plan'){
         steps{
             sh '''
-              cd my-terraform
+              cd my-terraform/ec2
               terraform plan
             '''
         }
@@ -44,7 +44,7 @@ pipeline{
     stage('terraform apply'){
         steps{
             sh '''
-              cd my-terraform
+              cd my-terraform/ec2
               terraform apply -auto-approve
             '''
         }
