@@ -15,7 +15,8 @@ pipeline{
                  git sparse-checkout set ec2
                  git checkout main 
               '''
-            }
+              }
+       }
     }
     stage('trivy scan'){
         steps{
