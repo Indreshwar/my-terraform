@@ -1,0 +1,60 @@
+pipeline{
+    agent {
+        label 'terraform'
+    }
+    parameters{
+          choice(name: 'env', choices:['dev','non-prod','prod'], description:'choose the evironment to deploy')
+    }
+    stages{
+        stage('git clone-ec2'){
+           steps{
+              sh '''
+                 git clone --no-checkout https://github.com/Indreshwar/my-terraform.git 
+                 cd my-terraform
+                 git sparse-checkout init --cone 
+                 git sparse-checkout set ec2
+                 git checkout main 
+              '''
+            }
+    }
+    stage('trivy scan'){
+        steps{
+            sh '''
+               cd my-terraform/ec2
+               trivy fs --format table -o ec2-report.txt .
+              '''
+        }
+    }
+    stage('terraform init'){
+        steps{
+            sh '''
+              cd my-terraform
+              terraform init
+            '''
+        }
+    }
+    stage('terraform plan'){
+        steps{
+            sh '''
+              cd my-terraform
+              terraform plan
+            '''
+        }
+    }
+    stage('terraform apply'){
+        steps{
+            sh '''
+              cd my-terraform
+              terraform apply -auto-approve
+            '''
+        }
+    }
+    post{
+        success{
+            echo "pipeine executed sucessfully"
+        }
+        failure{
+            echo "pipeline failed"
+        }
+    }
+}
