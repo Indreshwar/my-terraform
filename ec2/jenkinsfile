@@ -9,6 +9,7 @@ pipeline{
         stage('git clone-ec2'){
            steps{
               sh '''
+                rm -rf my-terraform
                  git clone --no-checkout https://github.com/Indreshwar/my-terraform.git 
                  cd my-terraform
                  git sparse-checkout init --cone 
@@ -19,36 +20,32 @@ pipeline{
        }
     stage('trivy scan'){
         steps{
-            sh '''
-               cd my-terraform/ec2
-               trivy fs --format table -o ec2-report.txt .
-              '''
+            dir('ec2') {
+               sh 'trivy fs --format table -o ec2-report.txt . ' 
+            }
         }
     }
     stage('terraform init'){
         steps{
-            sh '''
-              cd my-terraform/ec2
-              terraform init
-            '''
-        }
+           dir('ec2'){
+             sh 'terraform init'
+           }
+       }
     }
     stage('terraform plan'){
         steps{
-            sh '''
-              cd my-terraform/ec2
-              terraform plan
-            '''
+            dir('ec2'){
+                sh 'terraform plan'
+            }
         }
     }
     stage('terraform apply'){
         steps{
-            sh '''
-              cd my-terraform/ec2
-              terraform apply -auto-approve
-            '''
+            dir('ec2'){
+                sh 'terraform apply -auto-approve'
+            }
         }
-     }
+      }
     }
      post{
         success{
