@@ -17,7 +17,6 @@ pipeline{
               '''
               }
        }
-    }
     stage('trivy scan'){
         steps{
             sh '''
@@ -49,8 +48,9 @@ pipeline{
               terraform apply -auto-approve
             '''
         }
+     }
     }
-    post{
+     post{
         success{
             echo "pipeine executed sucessfully"
         }
