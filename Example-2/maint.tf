@@ -1,22 +1,21 @@
-#creating a default vpc its already present but terraform doesnot create the resource it add in state management
-resource "aws_default_vpc" "default" {
+#creating a default VPC its already present but terraform doesnot create the resource it add in state management
+resource "aws_default_vpc" "myvpc" {
   tags = {
-    Name = "default-vpc"
+    Name = "default-VPC"
   }
-
 }
 
 #Creating a security group and adding ingress and egrees is old method but we are following the smae here
-resource "aws_security_group" "default-SG" {
-  name        = "default-sg"
-  description = "allow ssh access on port 22"
-  vpc_id      = aws_default_vpc.default.id
+resource "aws_security_group" "mysg" {
+  name        = "my-sg"
+  description = "Allow SSH access "
+  vpc_id      = aws_default_vpc.myvpc.id
   tags = {
-    Name = "Default-SG"
+    Name = "default-sg"
   }
   #ingress will create an inbound rule for security group
   ingress {
-    description = "allow ssh access to all traffic through port 22"
+    description = "allow access through port-22"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -26,27 +25,23 @@ resource "aws_security_group" "default-SG" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
-#creating a key-pair
-resource "aws_key_pair" "mykey" {
-  key_name   = "mykey"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDuzrIyUAaxcB3cOJ44eYOORu4oTf7etFc7OfIjEeqgm6+ufV2Q+2BU6VOmoxfrPGDLB3i4V7NcGN+uQmPL4xuxGWntLd6MKUnxBNvlAR1hfMll8SX3F71I2ysI1mwWvKS7mVEH2PU/FbD/u8hgjqsf/01cA9w8OB+UeibZZG8SoxE/6DzYteaylAi0u5zuIzRUfD5GBx7pUiGxLTvoteY83ANvuIbZXoH5I7d8hT11JX55cwPpzErz5q8DyNcj1j79LP4SgxCvhGxjjbWjTSZ8aFK4WRiGOB0d+L8MA7dKEK4CJC1W75cCJrz2hCQ1EXiVrAAZaH7Zs0mgEyJSZ+5W5R+zYHpRErO9YPEtWkos5E2tvvTELi1X+bE2bdnsQ3HDuvJH3Y35PRXpJIDxfuzrtHfllfBIlmVTMcHJrnylqDGo7hVuCkSzySimRstnmU8443ZksBptS1RWlF9tMMs16UikhbcCS9eXKf5017S2Bpf9EW69ULUoOnZFtg9geOU= acer@DESKTOP-1CCKMED"
 
+resource "aws_key_pair" "my-key" {
+  key_name   = "mykey"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCaRgl1MLucAeieZzMckF4WZTEKnXwTtZtBy3hhxd+M7hacfw0TMLn4/LddFiM3eRlXPQZrBJN50a0a9oQV6PmCYVxvYVEMjSMHi97gbScidn5kl0cjubQE5fOsR2Wn2fHnOKzZqQg4ul8/U1AEx+LktK9XRy1HfpDzRTIN0pdjaThRlR7s1BIBqEAX5+i39Q6QyPPGv8Rxivi5uJ+6z5jhsf5YdubpBvlNZa/9bsO9JovFVwwhcvUlsp3bCQ2SkoE1im57DW7KTPkCgE772nqPSv4YLuM3Q2qHhyFr5R24gXK2ja72KVAf7WOSG2BNMV5oXacwMBpc9AsfkRsgfhKp7S6EMwAFAFydx38UwT006CzqLMVBRJNL6QiSZ0W9agcouV3Ta7feEBqLyrf4/D0bf/BUJoxeAuso+qnOaMDzuTFpbkzWAjWjGW8KJjq45/DL8viwuAqRQmsjNwpPoZoA7d3G2p/NIgCy5J9xG8SyEtVLrs3Q9OJpVsM2BVgAVlE= acer@DESKTOP-1CCKMED"
 }
 
 #Creating an ec2 instance and we cam login to ec2 instance using my key
-resource "aws_instance" "myserver" {
-  ami                    = "ami-05d2d839d4f73aafb"
-  instance_type          = "t3.micro"
-  vpc_security_group_ids = [aws_security_group.default-SG.id]
+resource "aws_instance" "my-server" {
+  ami                    = "ami-01a00762f46d584a1"
+  instance_type          = "t3.small"
   key_name               = "mykey"
+  vpc_security_group_ids = [aws_security_group.mysg.id]
   tags = {
-    Name = "mykeyserver"
+    Name = "key-server"
   }
 }
-
-

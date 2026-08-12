@@ -1,0 +1,56 @@
+pipeline{
+    agent {
+        label 'terraform'
+    }
+    parameters{
+        choice (name: 'Action', chocies: ['apply','destroy'], description: 'choose the action')
+    }
+    stages{
+        stage('terraform initialize'){
+            steps{
+                dir('Example-2'){
+                    sh 'terraform init'
+                }
+            }
+        }
+        stage('format & validate'){
+            steps{
+                dir('Example-2'){
+                    sh 'terraform fmt'
+                    sh 'terraform validate'
+                }
+            }
+        }
+        stage('plan'){
+            steps{
+                dir('Example-2'){
+                    sh 'terraform plan'
+                }
+            }
+        }
+        stage('action'){
+            steps{
+                dir('Example-2'){
+                    script{
+                        if (params.action == 'apply'){
+                   echo "applying the configuration"
+                   sh 'terraform apply -auto-approve'
+                }
+                else if (params.action == 'destroy'){
+                    echo "estroying the infra"
+                    sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
+        }
+        }   
+    }
+    post{
+        success{
+            echo "infra created successfully"
+        }
+        failure{
+            echo " infra creation failed"
+        }
+    }
+}
