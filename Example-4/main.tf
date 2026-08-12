@@ -7,14 +7,13 @@ terraform {
     }
   }
 }
-resource "local_file" "demo" {
-  content  = "Hello welcome to terrform"
-  filename = "hello.txt"
 
+resource "local_file" "demo" {
+  content  = "hello ,welcome to terraform practice"
+  filename = "hello.txt"
 }
 
 resource "local_file" "file1" {
-  content  = "he path to the file that will be created. Missing parent directories will be created. If the file already exists, it will be overridden with the given content."
-  filename = "samplefile.txt"
-
+  content  = "if the file exist and if we change the content and do the terraform apply it will first delete the file and create the file with the new content"
+  filename = "sample-file.txt"
 }
