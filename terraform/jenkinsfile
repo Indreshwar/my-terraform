@@ -1,0 +1,78 @@
+pipeline {
+    agent {
+        label 'terraform'
+    }
+    parameters {
+        choice (name:'env', choices: ['dev','non-prod','prod'], description:'choose the environment')
+        choice (name:'Action',choices: ['apply','destroy'], description:'choose action')
+    }
+    stages{
+        stage('terraform version'){
+            steps{
+                dir("environments/${params.env}") {
+                    sh 'terraform --version'
+                }
+            }
+        }
+        stage('terraform initialization'){
+            steps{
+                dir("environments/${params.env}"){
+                    sh 'terraform init'
+                }
+            }
+        }
+        stage('formatting & validation'){
+            steps{
+                dir("environments/${params.env}"){
+                    sh 'terraform validate'
+                    sh 'terraform fmt'
+                }
+            }
+        }
+        stage('planning'){
+            steps{
+                dir("environments/${params.env}"){
+                    sh 'terraform plan'
+                }
+            }
+        }
+        stage('production approval'){
+            when{
+                expression {
+                    params.env == 'prod' && (params.Action == 'apply' || params.Action == 'destroy')
+                }
+            }
+            steps{
+                script{
+                    input (
+                        message : 'APPROVAL FOR ${params.Action} in the PROD environment',
+                        ok : "Approve"
+                    )
+                }
+            }
+        }
+        stage('Action'){
+            steps{
+              dir("environments/${params.env}"){
+                script{
+                    if(params.Action == 'apply'){
+                        sh 'terraform apply -auto-approve'
+                    }
+                    else if(params.Action == 'destroy'){
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+              }
+            }
+        }
+    }
+    post {
+        success {
+            echo "Terraform ${params.Action} completed successfully for ${params.env}"
+        }
+
+        failure {
+            echo "Terraform ${params.Action} failed for ${params.env}"
+        }
+    }
+}
