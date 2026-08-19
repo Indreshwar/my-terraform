@@ -36,7 +36,7 @@ pipeline {
                         echo "crreating infra"
                         sh 'terraform apply -auto-approve'
                     }
-                    else if(params.Action == 'destroy')
+                    else if(params.Action == 'destroy'){
                         echo "destroying infra"
                         sh 'terraform destroy -auto-approve'
                     }
