@@ -1,27 +1,26 @@
 #declaring a variable
 variable "image_id" {
-  type        = string
-  default     = "ami-05d2d839d4f73aafb"
-  description = "specify the image id"
-  #validation block require 2 arguments mandatory is condition & error_message
-  validation {
-    condition     = length(var.image_id) > 4 && substr(var.image_id, 0, 4) == "ami-"
-    error_message = "The image_id must be valid AMI starting with \"ami-\" "
-  }
+  type = string
+  default = "ami-01a00762f46d584a1"
+  description = "enter the AMI id"
+  #validation is a block require 2 manadatory arguments i.e condition & error message
+  validation{
+    condition = length(var.image_id) > 4 && substr(var.image_id,0,4) == "ami-"
+    error_message = "The image id must be valid and it should start with \"ami-\" "
+  } 
 }
-variable "ec2_instance_type" {
-  type        = string
-  default     = "t2.micro"
-  description = "specify the instance type to be used"
+variable "instance_type" {
+  type = string
+  default = "t3.micro"
+  description = "specify the instance type"
   validation {
-    condition     = can(regex("^[t][2-3].(nano|small|micro)", var.ec2_instance_type))
+    condition = can(regex("^[t][2-3].(nano|small|micro)",var.instance_type))  #can evaluates the expression return boolean value
     error_message = "invalid instance type"
   }
-
 }
 resource "aws_instance" "myserver" {
   ami           = var.image_id
-  instance_type = var.ec2_instance_type
+  instance_type = var.instance_type
   tags = {
     Name = "my-server"
   }

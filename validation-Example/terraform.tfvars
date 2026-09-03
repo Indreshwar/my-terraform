@@ -1,7 +1,7 @@
-ec2_instance_type = "t3.small"
-image_id          = "ami-045443a70fafb8bbc"
+instance_type = "t3.small"
+image_id          = "ami-01a00762f46d584a1"
 
-#terraform.tfvars will high priority than the default values in variables.tf
+#terraform.tfvars will have high priority than the default values in variables.tf
 
 #priority
 #high priority - which we give through cli ex terraform apply -var="ec2_instance_type=t3.micro"
