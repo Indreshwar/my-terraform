@@ -1,0 +1,7 @@
+region            = "ap-south-1"
+vpc_cidr          = "10.0.0.0/16"
+subnet_cidr       = "10.0.2.0/24"
+availability_zone = "ap-south-1a"
+ssh_cidr          = "10.0.2.0/24"
+ami               = "ami-01a00762f46d584a1"
+instance_type     = "t3.small"
